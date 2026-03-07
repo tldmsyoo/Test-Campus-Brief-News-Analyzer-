@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Campus Brief</title>
+
+  <!-- 폰트: Noto Serif KR (본문 우아함) + Space Mono (UI 레이블 엣지) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&family=Space+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─────────────────────────────────────────────
+       CSS 변수: 에디토리얼 다크 팔레트
+    ───────────────────────────────────────────── */
+    :root {
+      --bg:          #0b0e14;
+      --bg-card:     #111520;
+      --bg-card2:    #161c2a;
+      --border:      rgba(255,255,255,0.07);
+      --border-glow: rgba(99,210,187,0.35);
+      --accent:      #63d2bb;   /* 민트 시안 */
+      --accent2:     #f0a54a;   /* 앰버 */
+      --accent3:     #7c8cf8;   /* 라벤더 */
+      --text:        #e8eaf0;
+      --text-muted:  #7a8099;
+      --text-dim:    #3e4560;
+      --danger:      #ff6b6b;
+      --tag-bg:      rgba(99,210,187,0.1);
+      --tag-active:  rgba(99,210,187,0.22);
+      --radius:      14px;
+      --radius-sm:   8px;
+      --shadow:      0 8px 32px rgba(0,0,0,0.45);
+      --shadow-lg:   0 20px 60px rgba(0,0,0,0.6);
+    }
+
+    /* ─────────────────────────────────────────────
+       리셋 & 기본
+    ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans KR', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      /* 미세한 그리드 텍스처 */
+      background-image:
+        linear-gradient(rgba(99,210,187,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,210,187,0.025) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* ─────────────────────────────────────────────
+       배경 장식 블러 오브
+    ───────────────────────────────────────────── */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+      animation: orbFloat 12s ease-in-out infinite;
+    }
+    .bg-orb-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(99,210,187,0.08) 0%, transparent 70%);
+      top: -200px; right: -150px;
+    }
+    .bg-orb-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(124,140,248,0.07) 0%, transparent 70%);
+      bottom: 100px; left: -200px;
+      animation-delay: -6s;
+    }
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(30px); }
+    }
+
+    /* ─────────────────────────────────────────────
+       레이아웃 래퍼
+    ───────────────────────────────────────────── */
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ─────────────────────────────────────────────
+       헤더
+    ───────────────────────────────────────────── */
+    header {
+      text-align: center;
+      margin-bottom: 52px;
+      animation: fadeDown 0.8s ease both;
+    }
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--tag-bg);
+      border: 1px solid var(--border-glow);
+      border-radius: 99px;
+      padding: 5px 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+    .header-badge::before {
+      content: '';
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    h1 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: clamp(2.2rem, 6vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #e8eaf0 30%, var(--accent) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 14px;
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+      font-weight: 300;
+      letter-spacing: 0.02em;
+      line-height: 1.7;
+    }
+
+    /* ─────────────────────────────────────────────
+       입력 카드
+    ───────────────────────────────────────────── */
+    .input-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      animation: fadeUp 0.8s 0.15s ease both;
+      transition: border-color 0.3s;
+    }
+    .input-card:focus-within {
+      border-color: var(--border-glow);
+      box-shadow: var(--shadow), 0 0 0 1px rgba(99,210,187,0.1);
+    }
+
+    .input-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .input-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 14.5px;
+      line-height: 1.8;
+      padding: 18px 20px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.25s, background 0.25s;
+    }
+    textarea::placeholder { color: var(--text-dim); }
+    textarea:focus {
+      border-color: rgba(99,210,187,0.4);
+      background: #1a2030;
+    }
+
+    /* 글자 수 카운터 */
+    .char-count {
+      text-align: right;
+      margin-top: 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      transition: color 0.3s;
+    }
+    .char-count.active { color: var(--accent); }
+
+    /* 분석 버튼 */
+    .btn-analyze {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      margin-top: 18px;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, var(--accent), #4ab8a5);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: #0b0e14;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+      box-shadow: 0 4px 20px rgba(99,210,187,0.3);
+    }
+    .btn-analyze::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .btn-analyze:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(99,210,187,0.4);
+    }
+    .btn-analyze:hover:not(:disabled)::before { opacity: 1; }
+    .btn-analyze:active:not(:disabled) { transform: translateY(0); }
+    .btn-analyze:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* 버튼 스피너 */
+    .spinner {
+      width: 17px; height: 17px;
+      border: 2px solid rgba(0,0,0,0.25);
+      border-top-color: #0b0e14;
+      border-radius: 50%;
+      display: none;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .btn-analyze.loading .btn-text { display: none; }
+    .btn-analyze.loading .spinner { display: block; }
+
+    /* ─────────────────────────────────────────────
+       결과 섹션 공통
+    ───────────────────────────────────────────── */
+    #results {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+    #results.visible { display: flex; }
+
+    /* 결과 카드 애니메이션 */
+    .result-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px 28px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s;
+    }
+    .result-card.animate-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .result-card:hover {
+      border-color: rgba(99,210,187,0.15);
+    }
+
+    /* 카드 헤더 */
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-icon {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+    .icon-mint   { background: rgba(99,210,187,0.12); }
+    .icon-amber  { background: rgba(240,165,74,0.12); }
+    .icon-purple { background: rgba(124,140,248,0.12); }
+    .icon-rose   { background: rgba(255,107,107,0.12); }
+    .icon-blue   { background: rgba(74,165,240,0.12); }
+
+    .card-title {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      font-weight: 300;
+    }
+    .card-num {
+      margin-left: auto;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* ─────────────────────────────────────────────
+       섹션별 스타일
+    ───────────────────────────────────────────── */
+
+    /* 요약 */
+    .summary-text {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 15.5px;
+      line-height: 1.9;
+      color: #cdd3e0;
+      font-weight: 300;
+      border-left: 3px solid var(--accent);
+      padding-left: 18px;
+    }
+    .summary-sentence {
+      display: block;
+      margin-bottom: 10px;
+    }
+    .summary-sentence:last-child { margin-bottom: 0; }
+
+    /* 포인트 */
+    .point-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+    .point-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 13px 16px;
+      background: var(--bg-card2);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      font-size: 14px;
+      line-height: 1.75;
+      color: #c8cdd8;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .point-item:hover {
+      border-color: rgba(99,210,187,0.25);
+      background: #1a2030;
+    }
+    .point-bullet {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #4ab8a5);
+      color: #0b0e14;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* 키워드 */
+    .keyword-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .keyword-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 8px 18px;
+      font-size: 14px;
+      color: var(--text);
+      transition: all 0.25s;
+      cursor: default;
+    }
+    .keyword-chip:hover {
+      border-color: var(--border-glow);
+      background: var(--tag-active);
+      color: var(--accent);
+    }
+    .keyword-rank {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .keyword-bar-wrap {
+      margin-top: 18px;
+    }
+    .keyword-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .keyword-bar-label {
+      width: 90px;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .keyword-bar-track {
+      flex: 1;
+      height: 6px;
+      background: var(--bg-card2);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .keyword-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+      width: 0;
+      transition: width 1s cubic-bezier(0.25,1,0.5,1);
+    }
+    .keyword-bar-count {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      width: 32px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* 대학생 관점 */
+    .student-box {
+      background: linear-gradient(135deg, rgba(240,165,74,0.06), rgba(240,165,74,0.02));
+      border: 1px solid rgba(240,165,74,0.2);
+      border-radius: var(--radius-sm);
+      padding: 20px 22px;
+    }
+    .student-insight {
+      font-size: 15px;
+      line-height: 1.85;
+      color: #d9cebc;
+      font-weight: 300;
+    }
+    .student-insight strong {
+      color: var(--accent2);
+      font-weight: 600;
+    }
+    .student-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .student-tag {
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 99px;
+      background: rgba(240,165,74,0.1);
+      border: 1px solid rgba(240,165,74,0.25);
+      color: var(--accent2);
+      font-weight: 500;
+    }
+
+    /* 트렌드 분석 */
+    .trend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .trend-item {
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .trend-item.matched {
+      border-color: var(--border-glow);
+      background: rgba(99,210,187,0.06);
+    }
+    .trend-item.matched::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+    }
+    .trend-name {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      transition: color 0.3s;
+    }
+    .trend-item.matched .trend-name {
+      color: var(--accent);
+    }
+    .trend-score-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .trend-score-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: var(--text-dim);
+      width: 0;
+      transition: width 1.2s cubic-bezier(0.25,1,0.5,1);
+    }
+    .trend-item.matched .trend-score-fill {
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+    }
+    .trend-score-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .trend-item.matched .trend-score-text {
+      color: var(--accent);
+    }
+    .trend-badge {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 99px;
+      background: var(--accent);
+      color: #0b0e14;
+      font-weight: 700;
+      font-family: 'Space Mono', monospace;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* ─────────────────────────────────────────────
+       에러 메시지
+    ───────────────────────────────────────────── */
+    .error-msg {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      background: rgba(255,107,107,0.08);
+      border: 1px solid rgba(255,107,107,0.3);
+      border-radius: var(--radius-sm);
+      color: var(--danger);
+      font-size: 14px;
+      margin-top: 12px;
+    }
+    .error-msg.visible { display: flex; }
+
+    /* ─────────────────────────────────────────────
+       푸터
+    ───────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+    }
+
+    /* ─────────────────────────────────────────────
+       공통 애니메이션
+    ───────────────────────────────────────────── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─────────────────────────────────────────────
+       반응형
+    ───────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .wrapper { padding: 32px 16px 60px; }
+      .input-card, .result-card { padding: 20px 18px; }
+      .trend-grid { grid-template-columns: 1fr 1fr; }
+      h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 배경 장식 오브 -->
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <div class="wrapper">
+
+    <!-- ───────── 헤더 ───────── -->
+    <header>
+      <div class="header-badge">✦ AI-Powered &nbsp;·&nbsp; Local Only &nbsp;·&nbsp; No API</div>
+      <h1>AI Campus Brief</h1>
+      <p class="subtitle">뉴스 기사나 긴 글을 붙여넣으면<br>핵심 내용을 분석해 대학생 관점으로 정리합니다.</p>
+    </header>
+
+    <!-- ───────── 입력 카드 ───────── -->
+    <div class="input-card">
+      <div class="input-label">✦ 텍스트 입력</div>
+      <textarea
+        id="inputText"
+        placeholder="뉴스 기사, 보고서, 공지문 등 분석할 텍스트를 여기에 붙여넣으세요..."
+        spellcheck="false"
+      ></textarea>
+      <div class="char-count" id="charCount">0 자</div>
+
+      <!-- 에러 메시지 -->
+      <div class="error-msg" id="errorMsg">
+        <span>⚠</span>
+        <span id="errorText">분석할 텍스트를 입력해주세요.</span>
+      </div>
+
+      <!-- 분석 버튼 -->
+      <button class="btn-analyze" id="analyzeBtn" onclick="runAnalysis()">
+        <div class="spinner"></div>
+        <span class="btn-text">✦ &nbsp;텍스트 분석 시작</span>
+      </button>
+    </div>
+
+    <!-- ───────── 결과 영역 ───────── -->
+    <div id="results">
+
+      <!-- 1. 핵심 요약 -->
+      <div class="result-card" id="card-summary">
+        <div class="card-header">
+          <div class="card-icon icon-mint">📋</div>
+          <div>
+            <div class="card-title">핵심 요약</div>
+            <div class="card-subtitle">중요도 기반 핵심 문장 추출</div>
+          </div>
+          <div class="card-num" id="summaryCount">0 문장</div>
+        </div>
+        <div class="summary-text" id="summaryContent"></div>
+      </div>
+
+      <!-- 2. 중요 포인트 -->
+      <div class="result-card" id="card-points">
+        <div class="card-header">
+          <div class="card-icon icon-purple">💡</div>
+          <div>
+            <div class="card-title">중요한 포인트</div>
+            <div class="card-subtitle">핵심 내용 리스트업</div>
+          </div>
+          <div class="card-num" id="pointsCount">0 항목</div>
+        </div>
+        <ul class="point-list" id="pointsContent"></ul>
+      </div>
+
+      <!-- 3. 키워드 분석 -->
+      <div class="result-card" id="card-keywords">
+        <div class="card-header">
+          <div class="card-icon icon-amber">🔑</div>
+          <div>
+            <div class="card-title">키워드 분석</div>
+            <div class="card-subtitle">빈도 기반 핵심 단어 TOP 5</div>
+          </div>
+        </div>
+        <div class="keyword-grid" id="keywordChips"></div>
+        <div class="keyword-bar-wrap" id="keywordBars"></div>
+      </div>
+
+      <!-- 4. 대학생 관점 해석 -->
+      <div class="result-card" id="card-student">
+        <div class="card-header">
+          <div class="card-icon icon-rose">🎓</div>
+          <div>
+            <div class="card-title">대학생 관점 해석</div>
+            <div class="card-subtitle">나에게 어떤 의미인가</div>
+          </div>
+        </div>
+        <div class="student-box">
+          <div class="student-insight" id="studentContent"></div>
+          <div class="student-tags" id="studentTags"></div>
+        </div>
+      </div>
+
+      <!-- 5. 관련 트렌드 분석 -->
+      <div class="result-card" id="card-trends">
+        <div class="card-header">
+          <div class="card-icon icon-blue">📊</div>
+          <div>
+            <div class="card-title">관련 트렌드 분석</div>
+            <div class="card-subtitle">관심 분야 연관도 측정</div>
+          </div>
+        </div>
+        <div class="trend-grid" id="trendGrid"></div>
+      </div>
+
+    </div><!-- /#results -->
+
+    <!-- ───────── 푸터 ───────── -->
+    <footer>
+      AI CAMPUS BRIEF &nbsp;·&nbsp; 로컬 분석 엔진 &nbsp;·&nbsp; No API &nbsp;·&nbsp; Privacy First
+    </footer>
+  </div><!-- /.wrapper -->
+
+
+  <script>
+    /* ═══════════════════════════════════════════════════════════
+       AI Campus Brief — 로컬 텍스트 분석 엔진
+       모든 분석은 순수 JavaScript로만 수행 (외부 API 없음)
+    ═══════════════════════════════════════════════════════════ */
+
+    /* ────────────────────────────────────────────
+       한국어 불용어(Stopwords) 목록
+       키워드 분석 시 제외할 단어들
+    ──────────────────────────────────────────── */
+    const STOPWORDS = new Set([
+      '이', '가', '을', '를', '은', '는', '에', '의', '로', '으로', '와', '과', '도', '에서',
+      '하다', '있다', '되다', '이다', '하는', '있는', '되는', '된', '한', '이런', '그런',
+      '이것', '그것', '저것', '이번', '그', '저', '이', '저기', '거기', '여기',
+      '또한', '그리고', '그러나', '하지만', '따라서', '그래서', '하지만', '그런데',
+      '더', '덜', '많이', '적게', '매우', '아주', '정말', '너무', '매', '각',
+      '수', '것', '등', '및', '즉', '또', '및', '위해', '통해', '대한', '관한', '따른',
+      '관련', '대해', '등을', '등의', '등이', '등은', '들이', '들의', '들을',
+      '위한', '속에', '때', '때는', '그때', '이때', '만', '만큼', '처럼', '같은',
+      '제', '내', '내가', '우리', '여러', '모든', '각각', '함께', '계속', '바로',
+      '특히', '실제', '현재', '현재는', '더욱', '이미', '앞으로', '앞서', '지난',
+      '올해', '올해는', '작년', '오는', '이후', '이전', '말했다', '밝혔다', '설명했다',
+      '전했다', '나타났다', '보였다', '가졌다', '했다', '했고', '있다고', '있으며',
+      '통한', '해야', '해서', '이어', '이에', '대해서', '때문에', '때문', '부분',
+      '경우', '때문이다', '있어', '했으며', '했다고', '것으로', '것이', '것을', '것은',
+      '것이다', '것이며', '것이라고', '것이라', '라고', '라는', '라며', '라면',
+      '이라고', '이라는', '이라며', '이라면', '이라', '이며', '이어', '이었다', '였다',
+      'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'is', 'are', 'was', 'were',
+    ]);
+
+    /* ────────────────────────────────────────────
+       트렌드 카테고리 키워드 매핑
+       각 분야와 연관된 단어들 정의
+    ──────────────────────────────────────────── */
+    const TREND_CATEGORIES = [
+      {
+        id: 'ai',
+        name: 'AI / 기술',
+        icon: '🤖',
+        color: '#63d2bb',
+        keywords: [
+          'ai', '인공지능', '머신러닝', '딥러닝', '챗gpt', 'chatgpt', 'gpt', '자동화',
+          '알고리즘', '데이터', '빅데이터', '클라우드', '소프트웨어', '앱', '플랫폼',
+          '기술', 'it', '디지털', '혁신', '모델', '학습', '신경망', '로봇', '자율',
+          'llm', '생성', '언어모델', '검색', '서비스', '스마트', '개발자', '코딩',
+          '프로그래밍', '알파', '베타', '오픈소스', '메타버스', '가상현실', 'ar', 'vr',
+        ],
+      },
+      {
+        id: 'startup',
+        name: '스타트업 / 투자',
+        icon: '🚀',
+        color: '#f0a54a',
+        keywords: [
+          '스타트업', '투자', '벤처', '펀딩', '시리즈', '유니콘', '창업', '비즈니스',
+          '스케일업', '엑셀러레이터', '인큐베이터', '엔젤', 'ipo', '상장', '기업가치',
+          '비즈니스모델', '사업', '계획', '성장', '수익', '매출', '이익', '자금', '투자자',
+          '벤처캐피탈', 'vc', '에퀴티', '지분', '인수', '합병', 'm&a', '기업공개',
+          '글로벌', '해외', '진출', '파트너십', '협력', '계약', '협약',
+        ],
+      },
+      {
+        id: 'semiconductor',
+        name: '반도체 / IT 산업',
+        icon: '💾',
+        color: '#7c8cf8',
+        keywords: [
+          '반도체', '칩', '엔비디아', 'nvidia', '삼성', '인텔', 'intel', 'amd',
+          'tsmc', '파운드리', 'gpu', 'cpu', '나노', '공정', '팹', '제조',
+          '전기차', '배터리', '2차전지', '디스플레이', 'oled', '패널', '스마트폰',
+          '하드웨어', '네트워크', '5g', '6g', '통신', '인프라', 'iot', '산업',
+          '제조업', '공장', '자동화', '스마트팩토리', '디바이스', '모바일',
+          '컴퓨터', '서버', '데이터센터', '전자', '부품', '소재', '소자',
+        ],
+      },
+      {
+        id: 'education',
+        name: '교육 / 대학',
+        icon: '📚',
+        color: '#4abff0',
+        keywords: [
+          '교육', '대학', '학교', '학생', '학습', '수업', '강의', '교수', '졸업',
+          '학위', '대학원', '연구', '논문', '학점', '전공', '입시', '입학', '장학금',
+          '교육부', '국가장학금', '커리큘럼', '온라인강의', 'mooc', '에듀테크',
+          '유학', '해외대학', '교환학생', '복수전공', '부전공', '수강', '강좌',
+          '교육훈련', '직업훈련', '자격증', '국비', '평생교육', '이러닝',
+          '유치원', '초등', '중등', '고등', '학원', '과외', '사교육', '공교육',
+        ],
+      },
+      {
+        id: 'career',
+        name: '취업 / 커리어',
+        icon: '💼',
+        color: '#d87cfc',
+        keywords: [
+          '취업', '채용', '인턴', '공채', '이직', '직장', '직업', '커리어', '경력',
+          '이력서', '자기소개서', '면접', '포트폴리오', '스펙', '자격증', '어학',
+          '토익', '토플', '공무원', '공기업', '대기업', '중소기업', '연봉', '임금',
+          '월급', '알바', '아르바이트', '파트타임', '프리랜서', '원격근무', '재택',
+          '직무', '직군', '부서', '팀', '팀장', '리더', '역량', '능력', '스킬',
+          '노동', '근로', '고용', '실업', '구직', '워라밸', '복지', '복리후생',
+        ],
+      },
+    ];
+
+    /* ────────────────────────────────────────────
+       대학생 관점 해석 생성을 위한 템플릿 & 로직
+    ──────────────────────────────────────────── */
+    const STUDENT_TEMPLATES = {
+      ai: {
+        insight: '이 내용은 AI와 기술 분야의 빠른 변화를 보여줍니다. <strong>관련 기술 역량</strong>을 갖추는 것이 취업과 미래 경쟁력에 직결될 수 있으며, 컴퓨터공학·데이터사이언스 전공자뿐 아니라 다양한 전공의 학생들도 AI 리터러시를 키울 필요가 있습니다.',
+        tags: ['AI 리터러시', '기술 역량', '미래 직업', '전공 불문 필수'],
+      },
+      startup: {
+        insight: '스타트업·투자 생태계의 흐름을 다루는 내용입니다. <strong>창업에 관심 있는 학생</strong>이라면 시장의 투자 트렌드를 파악하는 것이 중요하며, 스타트업 인턴십이나 창업 동아리 활동을 통해 실전 경험을 쌓는 것이 유리합니다.',
+        tags: ['창업 관심자', '스타트업 생태계', '투자 트렌드', '실전 경험'],
+      },
+      semiconductor: {
+        insight: '반도체·IT 산업의 이슈를 담고 있습니다. 한국 경제에서 반도체가 차지하는 비중이 크기 때문에, <strong>관련 산업 취업을 목표로 하는 공대생</strong>에게 특히 중요한 트렌드입니다. 산업 구조와 글로벌 공급망에 대한 이해가 필요합니다.',
+        tags: ['공대생 필독', '산업 구조 이해', '글로벌 공급망', '취업 연관'],
+      },
+      education: {
+        insight: '교육 시스템과 대학 환경의 변화를 다루는 내용입니다. <strong>학습 방식·학비·장학금</strong> 등 대학생의 일상과 밀접하게 연결되어 있습니다. 정책 변화를 미리 파악하면 장학금 기회나 교육 혜택을 놓치지 않을 수 있습니다.',
+        tags: ['장학금 기회', '교육정책', '학습 환경', '대학 생활'],
+      },
+      career: {
+        insight: '취업·커리어 시장의 변화를 반영하는 내용입니다. <strong>졸업 이후를 준비하는 대학생</strong>에게 가장 직접적인 정보가 담겨 있으며, 목표 직군의 채용 트렌드와 요구 역량을 파악하는 데 활용할 수 있습니다.',
+        tags: ['취준 필독', '채용 트렌드', '역량 개발', '직군 탐색'],
+      },
+      default: {
+        insight: '이 텍스트는 현재 사회·경제적 변화의 흐름을 담고 있습니다. <strong>대학생은 정보의 소비자</strong>를 넘어 비판적 시각으로 내용을 분석하고, 자신의 전공과 관심 분야에 어떻게 연결되는지 생각해보는 것이 중요합니다.',
+        tags: ['비판적 사고', '정보 활용', '사회 이해', '연결고리 탐색'],
+      },
+    };
+
+    /* ════════════════════════════════════════════
+       🔧 핵심 분석 함수들
+    ════════════════════════════════════════════ */
+
+    /**
+     * 텍스트를 문장 단위로 분리
+     * 마침표, 느낌표, 물음표, 줄바꿈 기준
+     */
+    function splitSentences(text) {
+      return text
+        .replace(/\n+/g, ' ')                  // 줄바꿈 → 공백
+        .split(/(?<=[.!?。])\s+|(?<=다\.)\s+|(?<=다\.)\s*\n|(?<=다\.) /)
+        .map(s => s.trim())
+        .filter(s => s.length > 15);           // 너무 짧은 조각 제거
+    }
+
+    /**
+     * 텍스트에서 단어 토큰화 (한국어 기준)
+     * 2글자 이상 단어, 숫자 혼합 허용
+     */
+    function tokenize(text) {
+      return text
+        .toLowerCase()
+        .replace(/[^가-힣a-z0-9\s]/g, ' ')     // 특수문자 제거
+        .split(/\s+/)
+        .filter(w => w.length >= 2 && !STOPWORDS.has(w));
+    }
+
+    /**
+     * 단어 빈도 계산
+     * @returns {Map} word → count
+     */
+    function calcWordFreq(tokens) {
+      const freq = new Map();
+      for (const token of tokens) {
+        freq.set(token, (freq.get(token) || 0) + 1);
+      }
+      return freq;
+    }
+
+    /**
+     * 문장 중요도 점수 계산 (간단한 TF 기반)
+     * 중요 단어(빈출 단어)가 많이 포함된 문장 = 높은 점수
+     */
+    function scoreSentences(sentences, topWords) {
+      const topWordSet = new Set(topWords.map(([w]) => w));
+      return sentences.map(sentence => {
+        const words = tokenize(sentence);
+        // 핵심 단어 포함 비율 점수
+        const overlap = words.filter(w => topWordSet.has(w)).length;
+        // 문장 길이 정규화 (너무 짧거나 너무 긴 문장 페널티)
+        const lenScore = Math.min(words.length / 15, 1);
+        // 문장 위치 점수 (앞쪽 문장 약간 우대)
+        const posScore = sentences.indexOf(sentence) === 0 ? 0.2 : 0;
+        const score = (overlap / Math.max(words.length, 1)) + lenScore * 0.3 + posScore;
+        return { sentence, score };
+      });
+    }
+
+    /**
+     * 트렌드 카테고리별 점수 계산
+     * 해당 카테고리 키워드와 텍스트 키워드의 교집합 개수
+     */
+    function calcTrendScores(tokens) {
+      const tokenSet = new Set(tokens);
+      return TREND_CATEGORIES.map(cat => {
+        const matches = cat.keywords.filter(kw => {
+          // 부분 일치도 허용 (예: '인공지능' → 'ai' 같이)
+          return tokenSet.has(kw) || tokens.some(t => t.includes(kw) || kw.includes(t) && kw.length > 2);
+        });
+        return {
+          ...cat,
+          score: matches.length,
+          matchedWords: matches.slice(0, 3),
+        };
+      }).sort((a, b) => b.score - a.score);
+    }
+
+    /**
+     * 대학생 관점 해석 생성
+     * 가장 높은 트렌드 카테고리 기반으로 해석문 선택
+     */
+    function generateStudentInsight(trendScores) {
+      const top = trendScores[0];
+      if (!top || top.score === 0) {
+        return STUDENT_TEMPLATES.default;
+      }
+      return STUDENT_TEMPLATES[top.id] || STUDENT_TEMPLATES.default;
+    }
+
+    /* ════════════════════════════════════════════
+       🎯 메인 분석 실행 함수
+    ════════════════════════════════════════════ */
+    function runAnalysis() {
+      const text = document.getElementById('inputText').value.trim();
+      const btn = document.getElementById('analyzeBtn');
+      const errorMsg = document.getElementById('errorMsg');
+
+      // 에러 초기화
+      errorMsg.classList.remove('visible');
+
+      // 입력 검증
+      if (!text) {
+        document.getElementById('errorText').textContent = '분석할 텍스트를 입력해주세요.';
+        errorMsg.classList.add('visible');
+        return;
+      }
+      if (text.length < 50) {
+        document.getElementById('errorText').textContent = '텍스트가 너무 짧습니다. 50자 이상 입력해주세요.';
+        errorMsg.classList.add('visible');
+        return;
+      }
+
+      // 로딩 상태
+      btn.disabled = true;
+      btn.classList.add('loading');
+
+      // 약간의 딜레이로 애니메이션 효과 부여
+      setTimeout(() => {
+        try {
+          performAnalysis(text);
+        } catch (e) {
+          console.error('분석 오류:', e);
+          document.getElementById('errorText').textContent = '분석 중 오류가 발생했습니다. 다시 시도해주세요.';
+          errorMsg.classList.add('visible');
+        } finally {
+          btn.disabled = false;
+          btn.classList.remove('loading');
+        }
+      }, 600);
+    }
+
+    /**
+     * 실제 분석 수행 및 UI 렌더링
+     */
+    function performAnalysis(text) {
+      /* ── 1. 기초 데이터 준비 ── */
+      const sentences  = splitSentences(text);
+      const tokens     = tokenize(text);
+      const freqMap    = calcWordFreq(tokens);
+
+      // 빈도 TOP 20 단어 (키워드 분석 & 문장 점수에 활용)
+      const sortedWords = [...freqMap.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 20);
+
+      // 트렌드 점수
+      const trendScores = calcTrendScores(tokens);
+
+      /* ── 2. 핵심 요약 (2~3문장) ── */
+      const scoredSentences = scoreSentences(sentences, sortedWords)
+        .sort((a, b) => b.score - a.score);
+      const summarySentences = scoredSentences
+        .slice(0, 3)
+        .sort((a, b) => sentences.indexOf(a.sentence) - sentences.indexOf(b.sentence));
+
+      /* ── 3. 중요 포인트 (3~5개) ── */
+      const pointSentences = scoredSentences
+        .slice(0, 5)
+        .sort((a, b) => sentences.indexOf(a.sentence) - sentences.indexOf(b.sentence));
+
+      /* ── 4. 키워드 TOP 5 ── */
+      const topKeywords = sortedWords.slice(0, 5);
+
+      /* ── 5. 대학생 관점 ── */
+      const studentInsight = generateStudentInsight(trendScores);
+
+      /* ── UI 렌더링 ── */
+      renderSummary(summarySentences);
+      renderPoints(pointSentences);
+      renderKeywords(topKeywords);
+      renderStudentInsight(studentInsight);
+      renderTrends(trendScores);
+
+      // 결과 영역 표시 + 카드 순차 애니메이션
+      showResults();
+    }
+
+    /* ════════════════════════════════════════════
+       🎨 렌더링 함수들
+    ════════════════════════════════════════════ */
+
+    /** 핵심 요약 렌더링 */
+    function renderSummary(sentences) {
+      const container = document.getElementById('summaryContent');
+      const countEl   = document.getElementById('summaryCount');
+      container.innerHTML = sentences
+        .map(s => `<span class="summary-sentence">${escapeHtml(s.sentence)}</span>`)
+        .join('');
+      countEl.textContent = `${sentences.length} 문장`;
+    }
+
+    /** 중요 포인트 렌더링 */
+    function renderPoints(sentences) {
+      const container = document.getElementById('pointsContent');
+      const countEl   = document.getElementById('pointsCount');
+      container.innerHTML = sentences
+        .map((s, i) => `
+          <li class="point-item">
+            <span class="point-bullet">${i + 1}</span>
+            <span>${escapeHtml(s.sentence)}</span>
+          </li>
+        `)
+        .join('');
+      countEl.textContent = `${sentences.length} 항목`;
+    }
+
+    /** 키워드 분석 렌더링 (칩 + 바 차트) */
+    function renderKeywords(keywords) {
+      const chipsEl = document.getElementById('keywordChips');
+      const barsEl  = document.getElementById('keywordBars');
+      const maxCount = keywords[0]?.[1] || 1;
+
+      // 칩
+      chipsEl.innerHTML = keywords
+        .map(([word, count], i) => `
+          <div class="keyword-chip">
+            <span class="keyword-rank">#${i + 1}</span>
+            <span>${escapeHtml(word)}</span>
+          </div>
+        `)
+        .join('');
+
+      // 바 차트 (애니메이션은 CSS transition으로)
+      barsEl.innerHTML = keywords
+        .map(([word, count]) => {
+          const pct = Math.round((count / maxCount) * 100);
+          return `
+            <div class="keyword-bar-row">
+              <span class="keyword-bar-label">${escapeHtml(word)}</span>
+              <div class="keyword-bar-track">
+                <div class="keyword-bar-fill" data-width="${pct}"></div>
+              </div>
+              <span class="keyword-bar-count">${count}회</span>
+            </div>
+          `;
+        })
+        .join('');
+
+      // 약간 딜레이 후 바 채우기 (transition 트리거)
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          document.querySelectorAll('.keyword-bar-fill').forEach(el => {
+            el.style.width = el.dataset.width + '%';
+          });
+        }, 300);
+      });
+    }
+
+    /** 대학생 관점 해석 렌더링 */
+    function renderStudentInsight(template) {
+      document.getElementById('studentContent').innerHTML = template.insight;
+      document.getElementById('studentTags').innerHTML = template.tags
+        .map(tag => `<span class="student-tag">${escapeHtml(tag)}</span>`)
+        .join('');
+    }
+
+    /** 트렌드 분석 렌더링 */
+    function renderTrends(trendScores) {
+      const maxScore = Math.max(...trendScores.map(t => t.score), 1);
+      const container = document.getElementById('trendGrid');
+
+      container.innerHTML = trendScores.map(trend => {
+        const isMatched = trend.score > 0;
+        const pct = Math.round((trend.score / maxScore) * 100);
+        const isTop = trendScores[0].id === trend.id && trend.score > 0;
+
+        return `
+          <div class="trend-item ${isMatched ? 'matched' : ''}" data-id="${trend.id}">
+            <div class="trend-name">
+              ${trend.icon} ${trend.name}
+              ${isTop ? '<span class="trend-badge">TOP</span>' : ''}
+            </div>
+            <div class="trend-score-bar">
+              <div class="trend-score-fill" data-width="${isMatched ? pct : 0}"></div>
+            </div>
+            <div class="trend-score-text">
+              ${isMatched ? `관련 키워드 ${trend.score}개 감지` : '관련성 낮음'}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 트렌드 바 채우기
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          document.querySelectorAll('.trend-score-fill').forEach(el => {
+            el.style.width = el.dataset.width + '%';
+          });
+        }, 400);
+      });
+    }
+
+    /** 결과 영역 표시 + 순차 애니메이션 */
+    function showResults() {
+      const results = document.getElementById('results');
+      results.classList.add('visible');
+
+      // 카드들을 순서대로 페이드인
+      const cards = document.querySelectorAll('.result-card');
+      cards.forEach((card, i) => {
+        card.classList.remove('animate-in');
+        setTimeout(() => {
+          card.classList.add('animate-in');
+        }, i * 100 + 50);
+      });
+
+      // 결과 영역으로 부드럽게 스크롤
+      setTimeout(() => {
+        results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 200);
+    }
+
+    /** HTML 이스케이프 (XSS 방지) */
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
+      return div.innerHTML;
+    }
+
+    /* ════════════════════════════════════════════
+       ⌨️  실시간 글자 수 카운터
+    ════════════════════════════════════════════ */
+    const textarea = document.getElementById('inputText');
+    const charCount = document.getElementById('charCount');
+
+    textarea.addEventListener('input', () => {
+      const len = textarea.value.length;
+      charCount.textContent = `${len.toLocaleString()} 자`;
+      charCount.classList.toggle('active', len > 0);
+    });
+
+    /* ════════════════════════════════════════════
+       ⌨️  키보드 단축키: Ctrl+Enter → 분석 실행
+    ════════════════════════════════════════════ */
+    textarea.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        runAnalysis();
+      }
+    });
+
+    /* ════════════════════════════════════════════
+       초기 힌트 메시지 (버튼 아래 작게)
+    ════════════════════════════════════════════ */
+    (function initHint() {
+      const btn = document.getElementById('analyzeBtn');
+      const hint = document.createElement('p');
+      hint.style.cssText = `
+        text-align:center; margin-top:10px; font-size:12px;
+        color:var(--text-dim); font-family:'Space Mono',monospace;
+      `;
+      hint.textContent = 'TIP: Ctrl + Enter 로도 분석 가능';
+      btn.parentNode.insertBefore(hint, btn.nextSibling);
+    })();
+  </script>
+</body>
+</html>
